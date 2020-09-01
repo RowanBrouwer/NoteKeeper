@@ -13,8 +13,7 @@ namespace NoteKeeper.ViewModels
     public class ItemsViewModel : BaseViewModel
     {
         private Item _selectedItem;
-
-        public ObservableCollection<Item> Items { get; }
+        public ObservableCollection<Note> Notes { get; }
         public Command LoadItemsCommand { get; }
         public Command AddItemCommand { get; }
         public Command<Item> ItemTapped { get; }
@@ -22,7 +21,7 @@ namespace NoteKeeper.ViewModels
         public ItemsViewModel()
         {
             Title = "Browse";
-            Items = new ObservableCollection<Item>();
+            Notes = new ObservableCollection<Note>();
             LoadItemsCommand = new Command(async () => await ExecuteLoadItemsCommand());
 
             ItemTapped = new Command<Item>(OnItemSelected);
@@ -32,15 +31,18 @@ namespace NoteKeeper.ViewModels
 
         async Task ExecuteLoadItemsCommand()
         {
-            IsBusy = true;
+            if (IsBusy)
+                return;
+
+                IsBusy = true;
 
             try
             {
-                Items.Clear();
-                var items = await DataStore.GetItemsAsync(true);
-                foreach (var item in items)
+                Notes.Clear();
+                var notes = await PluralsightDataStore.GetNotesAsync();
+                foreach (var note in Notes)
                 {
-                    Items.Add(item);
+                    Notes.Add(note);
                 }
             }
             catch (Exception ex)

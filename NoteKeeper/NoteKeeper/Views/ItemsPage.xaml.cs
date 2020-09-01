@@ -27,7 +27,10 @@ namespace NoteKeeper.Views
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            _viewModel.OnAppearing();
+            if (_viewModel.Notes.Count == 0)
+            {
+                _viewModel.LoadItemsCommand.Execute(null);
+            }
         }
     }
 }
